@@ -1,0 +1,35 @@
+
+
+int sensorPin = A0;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(6, OUTPUT);
+  pinMode(5,OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(3,OUTPUT);
+  pinMode(2, OUTPUT);
+}
+
+void loop() {
+  
+  int sensorValue = analogRead(A0);
+ Serial.print("sensorValue = ");
+ Serial.println(sensorValue);
+
+  if (sensorValue < 512) {
+ digitalWrite(2,1);
+ digitalWrite(3,1);
+ digitalWrite(4,1);
+ digitalWrite(5,0);  
+ digitalWrite(6,0);  
+}
+
+else {
+digitalWrite(2,0);
+digitalWrite(3,0);
+digitalWrite(4,0);
+digitalWrite(6,1);
+digitalWrite(5,1);
+}}
+
