@@ -1,47 +1,74 @@
-#include <LiquidCrystal.h>
+/*
+  Program Name: Ultrasonic Distance Display on 16x2 LCD
+  Goal:
+    - Use an HC-SR04 ultrasonic sensor to measure distance.
+    - Display the distance on a 16x2 LCD.
+    - Show "Out of range" if the reading is invalid.
 
+  Theme:
+    Sensor measurement, LCD text display, real-time updates.
+*/
+
+#include <LiquidCrystal.h>   // LCD library
+
+// Pins for ultrasonic sensor
 const int Trig = 8;
 const int Echo = 9;
+
+// Pins for the 16x2 LCD (RS, EN, D4, D5, D6, D7)
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+
+// Create LCD object
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-float distance , duration;
+// Variables for distance calculation
+float distance, duration;
+
 void setup() {
-  // put your setup code here, to run once:
-Serial.begin(9600);
-pinMode(Trig, OUTPUT);
-pinMode(Echo, INPUT);
-lcd.begin(16, 2);
+
+  Serial.begin(9600);               // Start serial monitor
+
+  pinMode(Trig, OUTPUT);            // Trigger pin as output
+  pinMode(Echo, INPUT);             // Echo pin as input
+
+  lcd.begin(16, 2);                 // Initialize 16x2 LCD
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-digitalWrite(Trig, 0);
-delayMicroseconds(2);
-digitalWrite(Trig, 1);
-delayMicroseconds(10);
-digitalWrite(Trig, 0);
 
- duration = pulseIn(Echo, 1);
+  // --- Ultrasonic Trigger Pulse ---
+  digitalWrite(Trig, LOW);          // Ensure trigger is low
+  delayMicroseconds(2);
+  digitalWrite(Trig, HIGH);         // 10us HIGH pulse to trigger ultrasonic burst
+  delayMicroseconds(10);
+  digitalWrite(Trig, LOW);
 
- distance = (duration / 2) * 0.0343;
+  // Measure how long Echo pin stays HIGH
+  duration = pulseIn(Echo, HIGH);
 
-if (distance >= 400 || distance <= 2)
-{
-lcd.clear();
-lcd.setCursor(0, 0);
-lcd.print ("Out of range");
+  // Convert time to distance (speed of sound = 343 m/s)
+  distance = (duration / 2.0) * 0.0343;
+
+  // --- Display Results on LCD ---
+
+  if (distance >= 400 || distance <= 2) {
+    lcd.clear();                    // Clear screen
+    lcd.setCursor(0, 0);            // First row
+    lcd.print("Out of range");      // Error message
+  }
+
+  else {
+    lcd.clear();                    
+    lcd.setCursor(0, 0);            // First row
+    lcd.print("Distance = ");
+
+    lcd.setCursor(0, 1);            // Second row (FIXED)
+    lcd.print(distance);            // Print numeric value
+    lcd.print(" cm");               // Print units
+  }
+
+  delay(100);                       // Update rate
 }
 
-else {
-  lcd.clear();
-lcd.setCursor(0, 0);
-lcd.print("Distance = ");
-lcd.setCursor(0, 2);
-lcd.print(distance);
-lcd.print("cm");
-lcd.print("       "); 
-delay(100);
-}
 delay (500);
 }
