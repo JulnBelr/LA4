@@ -38,4 +38,39 @@
 #include <LiquidCrystal.h>
 
 // define which Arduino pins connect to the LCD
-const int rs = 12;        //
+const int rs = 12;        // Register Select pin
+const int en = 11;        // Enable pin
+const int d4 = 5;         // Data pin 4
+const int d5 = 4;         // Data pin 5
+const int d6 = 3;         // Data pin 6
+const int d7 = 2;         // Data pin 7
+
+// create an LCD object using the above pin configuration
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+void setup() {
+
+  lcd.begin(16, 2);       // Initialize a 16-column, 2-row LCD display
+
+  Serial.begin(9600);     // Begin Serial Monitor communication at 9600 baud
+}
+
+void loop() {
+
+  lcd.setCursor(0, 0);    // Set LCD cursor to column 0, row 0 (top-left corner)
+
+  int V = analogRead(A0); // Read analog input A0 (0–1023 raw ADC value)
+
+  // Convert the ADC reading to a voltage:
+  // ADC formula: Voltage = (ADC_value * 5.0) / 1023
+  float VA = V * (5.00 / 1023.0);
+
+  lcd.print(VA);          // Display the calculated voltage on the LCD
+
+  Serial.print("VA = ");  // Print label to Serial Monitor
+  Serial.println(VA);     // Print the voltage value to Serial Monitor
+
+  lcd.setCursor(0, 1);    // Move to the second row of the LCD
+  lcd.print(millis() / 1000); // Print the number of seconds since the Arduino powered on
+
+  delay(200);             // Short delay so the LCD updates smoothly
