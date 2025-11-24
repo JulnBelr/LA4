@@ -1,50 +1,54 @@
-/*DHT11 : 
+/*DHT11 :
 Goal : Display the temperature and Humidity Values on the LCD.
 Main theme : Controlling a sensor and displaying results on LCD screen.
 */
 
+#include <LiquidCrystal.h>     // LCD library
+#include "DHT.h"               // DHT sensor library
 
-#include <LiquidCrystal.h>//include LCD and DHT libraries
-#include "DHT.h";
+// LCD Pins
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-//DHT-11
+// DHT-11
 #define DHTPIN 8
 #define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE);
 
-//Define Variables
+// Variables
 float hum;
 float temp;
 
-//Setup DHT sensor for normal 15mhz arduino
-DHT dht(DHTPIN,DHTTYPE);
-
-
-
 void setup() {
-//establish connection to LCD screen and DHT sensor
-lcd.begin(16,2);
-
-dht.begin();
+  lcd.begin(16, 2);     // Start LCD
+  dht.begin();          // Start DHT sensor
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
 
-delay(200);
-hum= dht.readHumidity();//gives the values to a name
-temp= dht.readTemperature();
+  hum = dht.readHumidity();
+  temp = dht.readTemperature();
 
-lcd.clear();
-//print values
-lcd.setCursor(0,0);
-lcd.print("Temp = ");
-lcd.print(temp);
-lcd.print(" C");
-lcd.setCursor(0,1);
-lcd.print("Humid = ");
-lcd.print(hum);
-lcd.print(" %");
+  // Check if sensor failed
+  if (isnan(hum) || isnan(temp)) {
+    lcd.setCursor(0, 0);
+    lcd.print("Sensor Error   ");
+    lcd.setCursor(0, 1);
+    lcd.print("Check DHT11    ");
+    delay(1000);
+    return;
+  }
 
+  // Display readings
+  lcd.setCursor(0, 0);
+  lcd.print("Temp: ");
+  lcd.print(temp);
+  lcd.print(" C   ");   // Extra spaces to clear old characters
+
+  lcd.setCursor(0, 1);
+  lcd.print("Hum:  ");
+  lcd.print(hum);
+  lcd.print(" %   ");
+
+  delay(1000);   // DHT11 only updates once per second
 }
