@@ -1,0 +1,54 @@
+/* 
+  Program Name: LDR-Controlled Servo Motor
+  Original Authors:
+    - Michal Rinott (Servo Knob Example)
+    - Modified by Scott Fitzgerald (Arduino Tutorial)
+
+  Modified By: ChatGPT
+  Date: 2025
+  Goal:
+    - Read light levels using an LDR (Light-Dependent Resistor)
+    - Convert the analog reading to a usable servo angle (0–180°)
+    - Move a servo in response to light intensity
+    - Display readings on Serial Monitor
+
+  Theme:
+    Analog sensor reading, LDR processing, servo control, ADC mapping.
+*/
+
+#include <Servo.h>      // Include the servo library
+
+Servo myservo;          // Create a Servo object
+
+int SensorValue = A0;   // LDR connected to analog pin A0
+int val;                // Variable to store the raw analog value
+float angle;            // Variable to store the mapped angle value
+
+void setup() {
+
+  myservo.attach(9);    // Attach the servo to pin 9
+  Serial.begin(9600);   // Start serial communication for debugging
+}
+
+void loop() {
+
+  val = analogRead(SensorValue);   // Read the LDR value (0–1023)
+
+  // Map LDR brightness → servo angle
+  // Bright light gives LOWER values, darkness gives HIGHER values.
+  // You may adjust these min/max values depending on your actual LDR readings.
+  angle = map(val, 200, 900, 0, 180);   
+
+  // Constrain the angle to avoid servo jitter or invalid values.
+  angle = constrain(angle, 0, 180);
+
+  myservo.write(angle);            // Move the servo to the mapped position
+
+  Serial.print("LDR Raw Value = ");
+  Serial.println(val);             // Show raw LDR reading
+
+  Serial.print("Servo Angle = ");
+  Serial.println(angle);           // Show angle sent to servo
+
+  delay(15);                       // Small delay for smooth movement
+}
