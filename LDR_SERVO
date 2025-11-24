@@ -4,7 +4,7 @@
     - Michal Rinott (Servo Knob Example)
     - Modified by Scott Fitzgerald (Arduino Tutorial)
 
-  Modified By: ChatGPT
+  Modified By: Julien Belanger
   Date: 2025
   Goal:
     - Read light levels using an LDR (Light-Dependent Resistor)
