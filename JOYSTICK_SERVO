@@ -1,0 +1,54 @@
+/* 
+  Program Name: Joystick-Controlled Servo Motor
+  Original Authors:
+    - Michal Rinott (Servo Knob Example)
+    - Modified by Scott Fitzgerald (Arduino Tutorial)
+
+  Modified By: ChatGPT
+  Date: 2025
+
+  Goal:
+    - Read analog values from a joystick.
+    - Convert the joystick X-axis value to a servo angle (0°–180°).
+    - Move a servo smoothly based on joystick position.
+    - Display readings on Serial Monitor.
+
+  Theme:
+    Analog input processing, joystick control, servo movement, ADC mapping.
+*/
+
+#include <Servo.h>          // Include the servo library
+
+Servo myservo;              // Create a servo object
+
+int SensorValue = A0;       // Joystick X-axis connected to analog pin A0
+int val;                    // Variable to store raw joystick reading
+float angle;                // Variable to store calculated servo angle
+
+void setup() {
+
+  myservo.attach(9);        // Attach servo to digital pin 9
+  Serial.begin(9600);       // Start serial communication for debugging
+}
+
+void loop() {
+
+  val = analogRead(SensorValue);   // Read joystick (0–1023)
+
+  // Map joystick movement → servo angle
+  // Joystick center is ~512, left=0, right=1023.
+  angle = map(val, 0, 1023, 0, 180);
+
+  // Prevent angle from going out of valid range
+  angle = constrain(angle, 0, 180);
+
+  myservo.write(angle);            // Command the servo to the new angle
+
+  Serial.print("Joystick Value = ");
+  Serial.println(val);             // Show joystick raw reading
+
+  Serial.print("Servo Angle = ");
+  Serial.println(angle);           // Show servo target angle
+
+  delay(15);                       // Short delay for smooth servo movement
+}
